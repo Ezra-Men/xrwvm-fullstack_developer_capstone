@@ -7,13 +7,13 @@ from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth import logout
 from django.contrib import messages
 from datetime import datetime
-
+from .models import CarMake, CarModel
 from django.http import JsonResponse
 from django.contrib.auth import login, authenticate
 import logging
 import json
 from django.views.decorators.csrf import csrf_exempt
-# from .populate import initiate
+from .populate import initiate
 
 
 # Get an instance of a logger
@@ -102,3 +102,11 @@ def registration(request):
 # Create a `add_review` view to submit a review
 # def add_review(request):
 # ...
+@csrf_exempt
+def get_cars(request):
+    count = CarMake.objects.count()
+    if count == 0:
+        initiate()
+    car_models = CarModel.objects.select_related('car_make')
+    cars = [{"CarModel": model.name, "CarMake": model.car_make.name} for model in car_models]
+    return JsonResponse({"CarModels": cars})
