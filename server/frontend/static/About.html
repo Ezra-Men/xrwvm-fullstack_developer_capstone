@@ -1,7 +1,12 @@
+<!DOCTYPE html>
 <html>
 <head>
   <!-- Link the style sheet here -->
+  <link rel="stylesheet" href="/static/style.css">
+  <link rel="stylesheet" href="/static/bootstrap.min.css">
+  <title>Home - Best Cars Dealership</title>
 </head>
+<body>
 <div>
   <nav class="navbar navbar-expand-lg navbar-light" style="background-color:darkturquoise; height: 1in;">
     <div class="container-fluid">
@@ -12,57 +17,80 @@
       <div class="collapse navbar-collapse" id="navbarText">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
           <li class="nav-item">
-            <a class="nav-link" style="font-size: larger;" aria-current="page" href="/">Home</a>
+            <a class="nav-link active" style="font-size: larger;" href="/">Home</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link active" style="font-size: larger;" href="/about">About Us</a>
+            <a class="nav-link" style="font-size: larger;" href="/about">About Us</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" style="font-size: larger;" href="/contact">Contact Us</a>
           </li>
         </ul>
+        <!-- Logout Button -->
+        <button onclick="handleLogout()" class="btn btn-danger" style="margin-left: auto;">Logout</button>
       </div>
     </div>
   </nav>
-  
-    <div class="card" style="width: 80%;margin: auto; margin-top:5%;">
-      <div class="banner" name="about-header">
-      <!-- Insert header information here -->
-      </div>
-      <div style="display: flex;flex-direction: row; margin:auto">
+
+  <div class="card" style="width: 80%; margin: auto; margin-top: 5%;">
+    <div class="banner" name="about-header" style="padding: 20px;">
+      <h1>About Us</h1>
+      <p>Welcome to Best Cars Dealership, home to the finest selection of vehicles in North America. We specialize in both domestic and imported cars, offering unbeatable value and exceptional customer service.</p>
+    </div>
+
+    <div style="display: flex; flex-direction: row; justify-content: space-between; margin: auto; padding: 20px;">
       <div class="card" style="width: 30%;">
-        <img class="card-img-top" src="/static/person.png" alt="Card image">
+        <img class="card-img-top" src="/static/john_doe.jpg" alt="John Doe">
         <div class="card-body">
-          <p class="title">Person1</p>
-          <p>Person1 Title</p>
-          <p class="card-text">Some text that explains the person1 in about 2 short sentences</p>
-          <p>person1@example.com</p>
+          <p class="title">John Doe</p>
+          <p>Founder & CEO</p>
+          <p class="card-text">John brings over 20 years of automotive sales and leadership experience. He started Best Cars to bring honesty and transparency to car buying.</p>
+          <p>john.doe@bestcars.com</p>
         </div>
       </div>
 
       <div class="card" style="width: 30%;">
-        <img class="card-img-top" src="/static/person.png" alt="Card image">
+        <img class="card-img-top" src="/static/jane_smith.jpg" alt="Jane Smith">
         <div class="card-body">
-          <p class="title">Person2</p>
-          <p>Person2 Title</p>
-          <p class="card-text">Some text that explains the person2 in about 2 short sentences</p>
-          <p>person2@example.com</p>
+          <p class="title">Jane Smith</p>
+          <p>Sales Director</p>
+          <p class="card-text">Jane leads our sales team with a passion for customer satisfaction and market knowledge. She ensures every buyer finds their perfect match.</p>
+          <p>jane.smith@bestcars.com</p>
         </div>
       </div>
 
       <div class="card" style="width: 30%;">
-        <img class="card-img-top" src="/static/person.png" alt="Card image">
+        <img class="card-img-top" src="/static/michael_lee.jpg" alt="Michael Lee">
         <div class="card-body">
-          <p class="title">Person3</p>
-          <p>Person3 Title</p>
-          <p class="card-text">Some text that explains the person3 in about 2 short sentences</p>
-          <p>person3@example.com</p>
+          <p class="title">Michael Lee</p>
+          <p>Head of Imports</p>
+          <p class="card-text">Michael curates and manages our international inventory, ensuring quality and compliance for imported vehicles.</p>
+          <p>michael.lee@bestcars.com</p>
         </div>
       </div>
     </div>
-    </div>
-    </div>
-    
+  </div>
 </div>
 
+<!-- Logout JavaScript -->
+<script>
+  async function handleLogout() {
+    let logout_url = window.location.origin + "/djangoapp/logout";
+    const res = await fetch(logout_url, {
+      method: "GET",
+    });
+    const json = await res.json();
+    if (json) {
+      let username = sessionStorage.getItem('username');
+      sessionStorage.removeItem('username');
+      alert("Logging out " + username + "...");
+      window.location.href = window.location.origin;
+      window.location.reload();
+    } else {
+      alert("The user could not be logged out.");
+    }
+  }
+</script>
+
+</body>
 </html>

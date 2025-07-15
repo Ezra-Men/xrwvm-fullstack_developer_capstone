@@ -1,12 +1,12 @@
 # Uncomment the required imports before adding the code
 
-# from django.shortcuts import render
-# from django.http import HttpResponseRedirect, HttpResponse
-# from django.contrib.auth.models import User
-# from django.shortcuts import get_object_or_404, render, redirect
-# from django.contrib.auth import logout
-# from django.contrib import messages
-# from datetime import datetime
+from django.shortcuts import render
+from django.http import HttpResponseRedirect, HttpResponse
+from django.contrib.auth.models import User
+from django.shortcuts import get_object_or_404, render, redirect
+from django.contrib.auth import logout
+from django.contrib import messages
+from datetime import datetime
 
 from django.http import JsonResponse
 from django.contrib.auth import login, authenticate
@@ -25,20 +25,32 @@ logger = logging.getLogger(__name__)
 # Create a `login_request` view to handle sign in request
 @csrf_exempt
 def login_user(request):
-    # Get username and password from request.POST dictionary
-    data = json.loads(request.body)
-    username = data['userName']
-    password = data['password']
-    # Try to check if provide credential can be authenticated
-    user = authenticate(username=username, password=password)
-    data = {"userName": username}
-    if user is not None:
-        # If user is valid, call login method to login current user
-        login(request, user)
-        data = {"userName": username, "status": "Authenticated"}
-    return JsonResponse(data)
+    if request.method == "POST":
+        data = json.loads(request.body)
+        username = data.get('userName')
+        password = data.get('password')
+
+        user = authenticate(username=username, password=password)
+
+        if user is not None:
+            login(request, user)
+            return JsonResponse({"userName": username, "status": "Authenticated"})
+        else:
+            return JsonResponse({"status": "Failed", "message": "Invalid username or password"})
+
+    return JsonResponse({"status": "Failed", "message": "Only POST method allowed"})
 
 # Create a `logout_request` view to handle sign out request
+
+@csrf_exempt
+def logout_user(request):
+    if request.method == "GET":
+        logout(request)  # Terminate user session
+        data = {"userName": ""}  # Return empty username
+        return JsonResponse(data)
+    else:
+        return JsonResponse({"status": "Failed", "message": "Only GET method is allowed"})
+
 # def logout_request(request):
 # ...
 
@@ -46,6 +58,33 @@ def login_user(request):
 # @csrf_exempt
 # def registration(request):
 # ...
+
+@csrf_exempt
+def registration(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        username = data.get("userName")
+        password = data.get("password")
+        first_name = data.get("firstName")
+        last_name = data.get("lastName")
+        email = data.get("email")
+
+        if User.objects.filter(username=username).exists():
+            return JsonResponse({"error": "Already Registered"})
+
+        # Create and save new user
+        user = User.objects.create_user(
+            username=username,
+            password=password,
+            email=email,
+            first_name=first_name,
+            last_name=last_name
+        )
+        login(request, user)
+        return JsonResponse({"userName": username, "status": "Registered"})
+    
+    return JsonResponse({"error": "Invalid request method"})
+
 
 # # Update the `get_dealerships` view to render the index page with
 # a list of dealerships
